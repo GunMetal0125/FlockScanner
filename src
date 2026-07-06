@@ -1,0 +1,17 @@
+FlockDetector/
+│
+├── firmware/
+│   ├── src/
+│   │   ├── main.cpp
+│   │   ├── gps.cpp
+│   │   ├── display.cpp
+│   │   ├── storage.cpp
+│   │   ├── led.cpp
+│   │
+│   ├── include/
+│       ├── gps.h
+│       ├── display.h
+│       ├── storage.h
+│       ├── led.h
+│
+└── platformio.ini
