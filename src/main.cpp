@@ -12,7 +12,12 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
     Serial.begin(115200);
-    delay(500);
+
+    // Critical: allow ESP32-S3 boot to stabilize
+    delay(1200);
+
+    // Initialize I2C AFTER delay
+    Wire.begin(8, 9);   // SDA=8, SCL=9 for ESP32-S3 DevKitC-1
 
     // Initialize OLED
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
@@ -25,9 +30,12 @@ void setup() {
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(0, 0);
     display.println("Flock Detector");
-    display.println("WiFi Scanner Ready");
+    display.println("OLED OK");
     display.display();
 
+    delay(500);    // Let OLED fully power up
+
+    // Initialize WiFi scanning AFTER OLED is stable
     initWiFiScanner();
 }
 
