@@ -6,7 +6,7 @@ An ESP32-based electronics project for learning embedded development, GPS integr
 
 ## Hardware
 
-- ESP32-WROOM-32D
+- ESP32-S3-devkitc-1
 - SSD1306 OLED Display
 - WS2812 RGB LED
 - ATGM336H GPS Module
