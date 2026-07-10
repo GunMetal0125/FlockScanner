@@ -72,3 +72,13 @@ void scanForFlock() {
         }
     }
 }
+#include <WiFi.h>
+
+void wifiStart() {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin("yourSSID", "yourPASS");
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+    }
+}
