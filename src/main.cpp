@@ -5,19 +5,18 @@
 #include "led.h"
 #include "wifi.h"
 
-
 void setup() {
-    Serial.begin(115200);
+  Serial.begin(115200);
 
-    initLED();
-    initDisplay();
-    initGPS();
-    initStorage();
-    initWiFiScanner();
+  initLED();
+  initDisplay();
+  initGPS();
+  initStorage();
+  initWiFiScanner();   // REQUIRED for WiFi scanning
 
-
-    displayMessage("Flock Detector Ready");
+  displayMessage("Flock Detector Ready");
 }
+
 void loop() {
   GPSData data = readGPS();
 
@@ -28,11 +27,6 @@ void loop() {
   }
 
   delay(500);
-  scanForFlock();   
+  scanForFlock();      // MUST be inside the loop
   delay(500);
 }
-
-scanForFlock();
-delay(500);
-}
-initWiFiScanner();
