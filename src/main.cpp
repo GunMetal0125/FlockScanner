@@ -1,32 +1,20 @@
 #include <Arduino.h>
-#include "gps.h"
-#include "display.h"
-#include "storage.h"
-#include "led.h"
 #include "wifi.h"
 
 void setup() {
-  Serial.begin(115200);
+    Serial.begin(115200);
+    delay(500);
 
-  initLED();
-  initDisplay();
-  initGPS();
-  initStorage();
-  initWiFiScanner();   // REQUIRED for WiFi scanning
+    // Initialize WiFi scanning system
+    initWiFiScanner();
 
-  displayMessage("Flock Detector Ready");
+    Serial.println("Flock Detector started");
 }
 
 void loop() {
-  GPSData data = readGPS();
+    // Run Flock detection scan
+    scanForFlock();
 
-  if (data.valid) {
-    logData(data);
-    displayGPS(data);
-    blinkLED();
-  }
-
-  delay(500);
-  scanForFlock();      // MUST be inside the loop
-  delay(500);
+    // Small delay between scans
+    delay(2000);
 }
