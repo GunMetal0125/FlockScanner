@@ -18,7 +18,7 @@ static const int NUM_PREFIXES = sizeof(FLOCK_PREFIXES) / sizeof(FLOCK_PREFIXES[0
 void initWiFiScanner() {
     WiFi.mode(WIFI_STA);
     WiFi.disconnect();
-    delay(100);
+    delay(300);
 }
 
 bool isFlockMAC(String mac) {
@@ -60,7 +60,8 @@ ScanResult scanForFlock() {
     result.detectedMAC = "";
     result.hitCount = 0;
 
-    int n = WiFi.scanNetworks(false, true);
+    int n = WiFi.scanNetworks();   // FIXED FOR WROOM-32
+    result.networkCount = n;
 
     for (int i = 0; i < n; i++) {
         String mac = WiFi.BSSIDstr(i);
