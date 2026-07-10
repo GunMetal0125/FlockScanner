@@ -18,18 +18,20 @@ void setup() {
 
     displayMessage("Flock Detector Ready");
 }
-
 void loop() {
-    GPSData data = readGPS();
+  GPSData data = readGPS();
 
-    if (data.valid) {
-        logData(data);
-        displayGPS(data);
-        blinkLED();
-    }
+  if (data.valid) {
+    logData(data);
+    displayGPS(data);
+    blinkLED();
+  }
 
-    delay(500);
+  delay(500);
+  scanForFlock();   // ⭐ MUST BE INSIDE THE LOOP ⭐
+  delay(500);
 }
+
 scanForFlock();
 delay(500);
 }
