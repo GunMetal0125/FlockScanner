@@ -28,7 +28,7 @@ void loop() {
   }
 
   delay(500);
-  scanForFlock();   // ⭐ MUST BE INSIDE THE LOOP ⭐
+  scanForFlock();   
   delay(500);
 }
 
