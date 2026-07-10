@@ -28,18 +28,25 @@ void setup() {
     display.println("WiFi Scanner Ready");
     display.display();
 
-    // Initialize WiFi scanning
     initWiFiScanner();
 }
 
 void loop() {
-    scanForFlock();
+    ScanResult result = scanForFlock();
 
-    // OLED heartbeat
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println("Scanning...");
-    display.display();
 
+    if (result.isFlockDetected) {
+        display.println("⚠️ FLOCK DETECTED");
+        display.println(result.detectedMAC);
+        display.print("Hits: ");
+        display.println(result.hitCount);
+    } else {
+        display.println("Scanning...");
+        display.println("No Flock found");
+    }
+
+    display.display();
     delay(2000);
 }
