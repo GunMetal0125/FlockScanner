@@ -5,6 +5,7 @@ struct ScanResult {
     bool isFlockDetected;
     String detectedMAC;
     int hitCount;
+    int networkCount;
 };
 
 void initWiFiScanner();
