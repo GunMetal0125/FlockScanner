@@ -1,10 +1,15 @@
 #pragma once
 #include <Arduino.h>
 
-void initWiFiScanner();
-void scanForFlock();
+struct ScanResult {
+    bool isFlockDetected;
+    String detectedMAC;
+    int hitCount;
+};
 
-bool isFlockMAC(const String &mac);
-void recordMAC(const String &mac);
-int countRecentHits(unsigned long windowMs);
+void initWiFiScanner();
+ScanResult scanForFlock();
+bool isFlockMAC(String mac);
+void recordMAC(String mac);
+int countRecentHits(unsigned long window);
 void triggerAlert();
