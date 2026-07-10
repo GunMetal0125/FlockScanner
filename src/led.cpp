@@ -12,3 +12,12 @@ void blinkLED() {
     delay(100);
     digitalWrite(LED_PIN, LOW);
 }
+void triggerAlert() {
+    Serial.println("ALERT: FLOCK CAMERA NEARBY!");
+
+    // Example buzzer
+    tone(GPIO_NUM_15, 2000, 200);
+
+    // Example LED
+    digitalWrite(LED_PIN, HIGH);
+}
