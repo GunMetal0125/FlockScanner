@@ -12,14 +12,10 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
     Serial.begin(115200);
+    delay(800);   // ESP32-WROOM needs a short boot delay
 
-    // Critical: allow ESP32-S3 boot to stabilize
-    delay(1200);
+    Wire.begin(); // SDA/SCL auto-select on WROOM-32
 
-    // Initialize I2C AFTER delay
-    Wire.begin(8, 9);   // SDA=8, SCL=9 for ESP32-S3 DevKitC-1
-
-    // Initialize OLED
     if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
         Serial.println("OLED failed to start");
         while (true);
@@ -33,9 +29,8 @@ void setup() {
     display.println("OLED OK");
     display.display();
 
-    delay(500);    // Let OLED fully power up
+    delay(300);
 
-    // Initialize WiFi scanning AFTER OLED is stable
     initWiFiScanner();
 }
 
@@ -52,7 +47,8 @@ void loop() {
         display.println(result.hitCount);
     } else {
         display.println("Scanning...");
-        display.println("No Flock found");
+        display.print("Networks: ");
+        display.println(result.networkCount);
     }
 
     display.display();
