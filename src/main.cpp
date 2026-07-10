@@ -29,3 +29,7 @@ void loop() {
     delay(500);
 }
 scanForFlock();
+delay(500);
+}
+
+scanForF
