@@ -1,60 +1,25 @@
-void loop() {
-    ScanResult result = scanForFlock();
-
-    display.clearDisplay();
-    display.setCursor(0, 0);
-
-    display.println("Scanning...");
-    display.print("Network: ");
-    display.println(result.networkCount);
-
-    // Show SSID names
-    display.println(result.detectedMAC);
-
-    display.display();
-    delay(2000);
-}
 #include <FastLED.h>
 
-// Your data pin (ESP32-S3)
-#define LED_PIN 2
-
-// You have ONE WS2811 LED module
+#define LED_PIN 48
 #define NUM_LEDS 1
 
 CRGB leds[NUM_LEDS];
 
 void setup() {
-    // Initialize FastLED for WS2811
     FastLED.addLeds<WS2811, LED_PIN, GRB>(leds, NUM_LEDS);
-
-    // Optional: set brightness
     FastLED.setBrightness(100);
 }
 
 void loop() {
-    // Solid RED
     leds[0] = CRGB::Red;
     FastLED.show();
     delay(1000);
 
-    // Solid GREEN
     leds[0] = CRGB::Green;
     FastLED.show();
     delay(1000);
 
-    // Solid BLUE
     leds[0] = CRGB::Blue;
-    FastLED.show();
-    delay(1000);
-
-    // WHITE
-    leds[0] = CRGB::White;
-    FastLED.show();
-    delay(1000);
-
-    // OFF
-    leds[0] = CRGB::Black;
     FastLED.show();
     delay(1000);
 }
