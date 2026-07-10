@@ -3,6 +3,8 @@
 #include "display.h"
 #include "storage.h"
 #include "led.h"
+#include "wifi.h"
+
 
 void setup() {
     Serial.begin(115200);
