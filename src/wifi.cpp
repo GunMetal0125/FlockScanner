@@ -1,84 +1,93 @@
-#include "wifi.h"
 #include <WiFi.h>
+#include "wifi.h"
 
-static const char* flockPrefixes[] = {
-    // Legacy Flock Safety cameras
-    "8C:1F:64",
-    "AC:8A",
-    "F4:12:FA",
+// Rolling buffer for MAC hits
+static const int MAX_HITS = 50;
+static String hitMACs[MAX_HITS];
+static unsigned long hitTimes[MAX_HITS];
+static int hitIndex = 0;
 
-    // Newer 2023–2026 vendor blocks
-    "D8:3A:DD",
-    "E4:5F:01",
-    "B4:E6:2D",
-
-    // Additional OEM blocks observed in field deployments
-    "40:22:7A",
-    "7C:DF:A1"
+// Put your Flock MAC prefixes here
+static const char* FLOCK_PREFIXES[] = {
+    "7C:DF:A1",
+    "D8:BC:38",
+    "40:22:D8"
 };
+static const int NUM_PREFIXES = sizeof(FLOCK_PREFIXES) / sizeof(FLOCK_PREFIXES[0]);
 
-bool isFlockMAC(const String &mac) {
-    String m = mac;
-    m.toUpperCase();
-
-    for (auto &p : flockPrefixes) {
-        if (m.startsWith(p)) return true;
-    }
-
-    return false;
-}
-
-bool looksLikeFlock(const wifi_ap_record_t &ap) {
-    // Flock cameras broadcast a hidden SSID
-    if (strlen((char*)ap.ssid) != 0) return false;
-
-    // Channels typically used by Flock Safety hardware
-    if (!(ap.primary == 1 || ap.primary == 6 || ap.primary == 11)) return false;
-
-    // Beacon interval signature (Flock uses ~100 TU)
-    if (ap.beacon_interval < 90 || ap.beacon_interval > 110) return false;
-
-    // Vendor-specific IE length (Flock uses a unique tag)
-    if (ap.ie_len > 0 && ap.ie_len < 50) return true;
-
-    return false;
-}
-
+// ------------------------------------------------------
+// Initialize WiFi in STA mode (Arduino compatible)
+// ------------------------------------------------------
 void initWiFiScanner() {
     WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
+    WiFi.disconnect();        // ensures scanning mode
     delay(100);
 }
 
-void scanForFlock() {
-    int n = WiFi.scanNetworks(false, true);
-
-    for (int i = 0; i < n; i++) {
-        wifi_ap_record_t ap;
-        esp_wifi_sta_get_ap_info(&ap);
-
-        String mac = WiFi.BSSIDstr(i);
-
-        bool macMatch = isFlockMAC(mac);
-        bool behaviorMatch = looksLikeFlock(ap);
-
-        if (macMatch || behaviorMatch) {
-            Serial.println("⚠️ FLOCK CAMERA DETECTED");
-            Serial.println("MAC: " + mac);
-            Serial.println("RSSI: " + String(ap.rssi));
-            Serial.println("------------------------");
-
-            blinkLED();
+// ------------------------------------------------------
+// Check if a MAC matches known Flock prefixes
+// ------------------------------------------------------
+bool isFlockMAC(String mac) {
+    mac.toUpperCase();
+    for (int i = 0; i < NUM_PREFIXES; i++) {
+        if (mac.startsWith(FLOCK_PREFIXES[i])) {
+            return true;
         }
     }
+    return false;
 }
-#include <WiFi.h>
 
-void wifiStart() {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin("yourSSID", "yourPASS");
+// ------------------------------------------------------
+// Record a MAC hit with timestamp
+// ------------------------------------------------------
+void recordMAC(String mac) {
+    hitMACs[hitIndex] = mac;
+    hitTimes[hitIndex] = millis();
+    hitIndex = (hitIndex + 1) % MAX_HITS;
+}
 
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+// ------------------------------------------------------
+// Count hits within a time window (ms)
+// ------------------------------------------------------
+int countRecentHits(unsigned long window) {
+    unsigned long now = millis();
+    int count = 0;
+
+    for (int i = 0; i < MAX_HITS; i++) {
+        if (hitMACs[i].length() == 0) continue;
+        if (now - hitTimes[i] <= window) {
+            count++;
+        }
     }
+    return count;
+}
+
+// ------------------------------------------------------
+// Trigger alert (placeholder)
+// ------------------------------------------------------
+void triggerAlert() {
+    Serial.println("⚠️  FLOCK CAMERA DETECTED!");
+}
+
+// ------------------------------------------------------
+// Main scan loop — call this repeatedly from main.cpp
+// ------------------------------------------------------
+void scanForFlock() {
+    int n = WiFi.scanNetworks(false, true);  // async=false, show hidden=true
+
+    for (int i = 0; i < n; i++) {
+        String mac = WiFi.BSSIDstr(i);
+
+        if (isFlockMAC(mac)) {
+            recordMAC(mac);
+
+            int hits = countRecentHits(30000); // 30 seconds window
+
+            if (hits >= 3) {
+                triggerAlert();
+            }
+        }
+    }
+
+    WiFi.scanDelete();   // free memory
 }
