@@ -1,13 +1,13 @@
 #include <WiFi.h>
 #include "wifi.h"
 
-// Rolling buffer for MAC hits
+// Rolling buffer
 static const int MAX_HITS = 50;
 static String hitMACs[MAX_HITS];
 static unsigned long hitTimes[MAX_HITS];
 static int hitIndex = 0;
 
-// Put your Flock MAC prefixes here
+// Flock MAC prefixes
 static const char* FLOCK_PREFIXES[] = {
     "7C:DF:A1",
     "D8:BC:38",
@@ -15,18 +15,12 @@ static const char* FLOCK_PREFIXES[] = {
 };
 static const int NUM_PREFIXES = sizeof(FLOCK_PREFIXES) / sizeof(FLOCK_PREFIXES[0]);
 
-// ------------------------------------------------------
-// Initialize WiFi in STA mode (Arduino compatible)
-// ------------------------------------------------------
 void initWiFiScanner() {
     WiFi.mode(WIFI_STA);
-    WiFi.disconnect();        // ensures scanning mode
+    WiFi.disconnect();
     delay(100);
 }
 
-// ------------------------------------------------------
-// Check if a MAC matches known Flock prefixes
-// ------------------------------------------------------
 bool isFlockMAC(String mac) {
     mac.toUpperCase();
     for (int i = 0; i < NUM_PREFIXES; i++) {
@@ -37,18 +31,12 @@ bool isFlockMAC(String mac) {
     return false;
 }
 
-// ------------------------------------------------------
-// Record a MAC hit with timestamp
-// ------------------------------------------------------
 void recordMAC(String mac) {
     hitMACs[hitIndex] = mac;
     hitTimes[hitIndex] = millis();
     hitIndex = (hitIndex + 1) % MAX_HITS;
 }
 
-// ------------------------------------------------------
-// Count hits within a time window (ms)
-// ------------------------------------------------------
 int countRecentHits(unsigned long window) {
     unsigned long now = millis();
     int count = 0;
@@ -62,18 +50,17 @@ int countRecentHits(unsigned long window) {
     return count;
 }
 
-// ------------------------------------------------------
-// Trigger alert (placeholder)
-// ------------------------------------------------------
 void triggerAlert() {
     Serial.println("⚠️  FLOCK CAMERA DETECTED!");
 }
 
-// ------------------------------------------------------
-// Main scan loop — call this repeatedly from main.cpp
-// ------------------------------------------------------
-void scanForFlock() {
-    int n = WiFi.scanNetworks(false, true);  // async=false, show hidden=true
+ScanResult scanForFlock() {
+    ScanResult result;
+    result.isFlockDetected = false;
+    result.detectedMAC = "";
+    result.hitCount = 0;
+
+    int n = WiFi.scanNetworks(false, true);
 
     for (int i = 0; i < n; i++) {
         String mac = WiFi.BSSIDstr(i);
@@ -81,13 +68,18 @@ void scanForFlock() {
         if (isFlockMAC(mac)) {
             recordMAC(mac);
 
-            int hits = countRecentHits(30000); // 30 seconds window
+            int hits = countRecentHits(30000);
 
             if (hits >= 3) {
                 triggerAlert();
             }
+
+            result.isFlockDetected = true;
+            result.detectedMAC = mac;
+            result.hitCount = hits;
         }
     }
 
-    WiFi.scanDelete();   // free memory
+    WiFi.scanDelete();
+    return result;
 }
