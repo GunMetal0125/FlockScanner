@@ -31,3 +31,4 @@ void loop() {
 scanForFlock();
 delay(500);
 }
+initWiFiScanner();
