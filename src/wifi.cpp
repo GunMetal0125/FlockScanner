@@ -60,9 +60,21 @@ ScanResult scanForFlock() {
     result.detectedMAC = "";
     result.hitCount = 0;
 
-    int n = WiFi.scanNetworks();   // FIXED FOR WROOM-32
+    int n = WiFi.scanNetworks();   // Correct for ESP32-WROOM-32
     result.networkCount = n;
 
+    // Build SSID list for display
+    String ssidList = "";
+    for (int i = 0; i < n; i++) {
+        ssidList += WiFi.SSID(i);
+        ssidList += "\n";
+    }
+
+    // Store SSID list in detectedMAC field temporarily
+    // (main.cpp will print it)
+    result.detectedMAC = ssidList;
+
+    // Flock detection
     for (int i = 0; i < n; i++) {
         String mac = WiFi.BSSIDstr(i);
 
