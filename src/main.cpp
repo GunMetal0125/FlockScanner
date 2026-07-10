@@ -13,6 +13,8 @@ void setup() {
     initDisplay();
     initGPS();
     initStorage();
+    initWiFiScanner();
+
 
     displayMessage("Flock Detector Ready");
 }
