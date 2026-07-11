@@ -81,3 +81,16 @@ void loop() {
 
     delay(500);
 }
+WiFi.mode(WIFI_STA);
+WiFi.disconnect();
+delay(100);
+
+int n = WiFi.scanNetworks(false, true);
+
+Serial.println("Networks found: " + String(n));
+
+if (n > 0) {
+    wifiNetworksFound = true;
+} else {
+    wifiNetworksFound = false;
+}
