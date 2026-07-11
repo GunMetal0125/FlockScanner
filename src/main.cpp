@@ -1,9 +1,14 @@
+#include <WiFi.h>
+
 // ================================================
 // Onboard ESP32-S3 RGB LED Pins
 // ================================================
 #define LED_R 47
 #define LED_G 48
 #define LED_B 45
+
+// WiFi detection flag
+bool wifiNetworksFound = false;
 
 // ================================================
 // LED Helper Functions
@@ -30,6 +35,7 @@ void gpsGreen() {
 // Setup
 // ================================================
 void setup() {
+    // LED setup
     pinMode(LED_R, OUTPUT);
     pinMode(LED_G, OUTPUT);
     pinMode(LED_B, OUTPUT);
@@ -38,7 +44,9 @@ void setup() {
     digitalWrite(LED_G, LOW);
     digitalWrite(LED_B, LOW);
 
-    // Fake startup delay
+    // WiFi setup
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
     delay(1000);
 }
 
@@ -48,20 +56,28 @@ void setup() {
 void loop() {
 
     // -----------------------------------------------
-    // SIMULATED GPS LOCK -> GREEN LED
+    // WIFI SCAN
     // -----------------------------------------------
-    gpsGreen();      // solid green
-    delay(2000);
+    int n = WiFi.scanNetworks();
+
+    if (n > 0) {
+        wifiNetworksFound = true;
+    } else {
+        wifiNetworksFound = false;
+    }
 
     // -----------------------------------------------
-    // SIMULATED WIFI NETWORK DETECTED -> RED BLINK
+    // WIFI NETWORKS DETECTED -> RED BLINK
     // -----------------------------------------------
-    blinkRed();      // blink red
-    delay(1000);
+    if (wifiNetworksFound) {
+        blinkRed();    // blink red
+    }
 
     // -----------------------------------------------
-    // SIMULATED FLOCK CAMERA DETECTED -> BLUE BLINK
+    // FLOCK CAMERA DETECTED -> BLUE BLINK (placeholder)
     // -----------------------------------------------
-    blinkBlue();     // blink blue
-    delay(1000);
+    // When you add flock detection later:
+    // if (isFlockDetected) blinkBlue();
+
+    delay(500);
 }
