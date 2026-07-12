@@ -1,64 +1,51 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <FastLED.h>
+#include <SPI.h>
+#include <SD.h>
 
-// ---------------- OLED CONFIG ----------------
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 32
-#define OLED_RESET -1
-#define OLED_ADDR 0x3C
-
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
-// ---------------- LED CONFIG ----------------
-#define LED_PIN 48        // change if your LED is on another pin
-#define NUM_LEDS 1
-CRGB leds[NUM_LEDS];
+// SPI pin mapping for ESP32-S3
+#define SD_CS   5
+#define SD_MOSI 11
+#define SD_MISO 13
+#define SD_CLK  12
 
 void setup() {
-  // Serial
   Serial.begin(115200);
-  Serial.println("Booting...");
+  delay(1000);
 
-  // LED init
-  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-  leds[0] = CRGB::Black;
-  FastLED.show();
+  Serial.println("Initializing SD card...");
 
-  // OLED init
-  if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
-    Serial.println("OLED FAILED TO START!");
-    while (true);
+  // Start SPI bus
+  SPI.begin(SD_CLK, SD_MISO, SD_MOSI, SD_CS);
+
+  // Mount SD card
+  if (!SD.begin(SD_CS)) {
+    Serial.println("SD card mount failed!");
+    return;
   }
 
-  Serial.println("OLED started!");
+  Serial.println("SD card mounted successfully!");
 
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.println("Flock");
-  display.println("Scanner");
-  display.display();
+  // Write test file
+  File file = SD.open("/test.txt", FILE_WRITE);
+  if (file) {
+    file.println("Hello SD card!");
+    file.close();
+    Serial.println("Wrote to test.txt");
+  } else {
+    Serial.println("Failed to open test.txt for writing");
+  }
+
+  // Read test file
+  file = SD.open("/test.txt");
+  if (file) {
+    Serial.println("Reading test.txt:");
+    while (file.available()) {
+      Serial.write(file.read());
+    }
+    file.close();
+  } else {
+    Serial.println("Failed to open test.txt for reading");
+  }
 }
 
 void loop() {
-  // LED cycle
-  leds[0] = CRGB::Green;
-  FastLED.show();
-  delay(800);
-
-  leds[0] = CRGB::Blue;
-  FastLED.show();
-  delay(800);
-
-  leds[0] = CRGB::White;
-  FastLED.show();
-  delay(800);
-
-  leds[0] = CRGB::Black;
-  FastLED.show();
-  delay(800);
 }
