@@ -2,8 +2,13 @@
 #define STORAGE_H
 
 struct GPSData {
-    float lat;   // We define 'lat' here so d.lat works in storage.cpp
-    float lng;   // We define 'lng' here so d.lng works in storage.cpp
+    // We defined both short and long names so nothing breaks!
+    float lat;
+    float latitude;
+    
+    float lng;
+    float longitude;
+    
     float altitude;
 };
 
