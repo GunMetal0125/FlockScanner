@@ -8,12 +8,14 @@ upload_speed = 921600
 board_upload.flash_size = 16MB
 
 build_flags =
-  -DARDUINO_USB_MODE=1
-  -DARDUINO_USB_CDC_ON_BOOT=1
-  -DARDUINO_USB_MSC_ON_BOOT=1
-  -DARDUINO_USB_BULK_LEVEL=5
+    -DARDUINO_USB_MODE=1
+    -DARDUINO_USB_CDC_ON_BOOT=1
+    -DARDUINO_USB_MSC_ON_BOOT=1
+    -DARDUINO_USB_BULK_LEVEL=5
 
 lib_deps =
-  fastled/FastLED
-  adafruit/Adafruit SSD1306 @ ^2.5.7
-  adafruit/Adafruit GFX Library @ ^1.11.9
+    fastled/FastLED
+    adafruit/Adafruit SSD1306 @ ^2.5.7
+    adafruit/Adafruit GFX Library @ ^1.11.9
+    lovyan03/LovyanGFX @ ^1.1.16
+    mikalhart/TinyGPSPlus @ ^1.0.3
