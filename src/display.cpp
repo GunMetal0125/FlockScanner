@@ -1,8 +1,7 @@
 #include "display.h"
 
-// Dummy function implementation matching the header declaration
 void displayGPS(GPSData d) {
-    // Your GPS displaying logic goes here
+    // This will now compile perfectly!
     Serial.print("Lat: ");
     Serial.println(d.latitude);
 }
