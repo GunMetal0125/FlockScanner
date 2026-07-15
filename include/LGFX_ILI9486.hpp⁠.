@@ -1,0 +1,41 @@
+#ifndef LGFX_ILI9486_HPP
+#define LGFX_ILI9486_HPP
+
+#define LGFX_USE_V1
+#include <LovyanGFX.hpp>
+
+class LGFX_ILI9486 : public lgfx::LGFX_Device {
+    lgfx::Panel_ILI9486 _panel_instance;
+    lgfx::Bus_SPI _bus_instance;
+
+public:
+    LGFX_ILI9486(void) {
+        {
+            auto cfg = _bus_instance.config();
+            cfg.spi_host = SPI2_HOST;     
+            cfg.spi_mode = 0;             
+            cfg.freq_write = 40000000;    
+            cfg.freq_read  = 16000000;    
+            cfg.pin_sclk = 12;            // Replace with your actual SCLK pin
+            cfg.pin_mosi = 11;            // Replace with your actual MOSI pin
+            cfg.pin_miso = 13;            // Replace with your actual MISO pin
+            cfg.pin_dc   = 14;            // Replace with your actual DC pin
+            _bus_instance.config(cfg);
+            _panel_instance.setBus(&_bus_instance);
+        }
+        {
+            auto cfg = _panel_instance.config();
+            cfg.pin_cs           = 10;    // Replace with your actual CS pin
+            cfg.pin_rst          = 9;     // Replace with your actual RST pin
+            cfg.pin_busy         = -1;
+            cfg.panel_width      = 320;
+            cfg.panel_height     = 480;
+            cfg.offset_x         = 0;
+            cfg.offset_y         = 0;
+            _panel_instance.config(cfg);
+        }
+        setPanel(&_panel_instance);
+    }
+};
+
+#endif // LGFX_ILI9486_HPP
