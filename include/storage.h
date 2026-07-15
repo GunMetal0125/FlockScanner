@@ -1,5 +1,10 @@
-#pragma once
-#include "gps.h"
+#ifndef STORAGE_H
+#define STORAGE_H
 
-void initStorage();
-void logData(GPSData d);
+struct GPSData {
+    float latitude;
+    float longitude;
+    float altitude;
+};
+
+#endif // STORAGE_H
