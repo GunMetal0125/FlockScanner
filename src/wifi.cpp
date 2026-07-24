@@ -9,11 +9,8 @@ void initWifiScanner() {
 
 void scanWifiNetworks() {
     int n = WiFi.scanNetworks();
-    if (n == 0) {
-        // No networks found
-    } else {
+    if (n > 0) {
         for (int i = 0; i < n; ++i) {
-            // Print network details
             WiFi.SSID(i);
             WiFi.RSSI(i);
         }
