@@ -1,10 +1,5 @@
-#ifndef DISPLAY_H
-#define DISPLAY_H
-
+#pragma once
 #include <Arduino.h>
-#include "storage.h" // FIX: Includes the file that defines 'GPSData' so the compiler knows what it is
 
-// This function can now successfully compile because GPSData is defined!
-void displayGPS(GPSData d);
-
-#endif // DISPLAY_H
+void initDisplay();
+void updateDisplayUI(bool alertActive, const char* macStr, int rssi, int channel);
