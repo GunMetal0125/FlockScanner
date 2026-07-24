@@ -1,10 +1,11 @@
-#pragma once
-#include <Arduino.h>
+#include <WiFi.h>  // Add this at the top of src/wifi.cpp
 
-extern volatile bool targetDetected;
-extern char lastMAC[18];
-extern int lastRSSI;
-extern uint8_t currentChannel;
+void initWifiScanner() {
+    WiFi.mode(WIFI_STA);
+    // ...
+}
 
-void initWifiScanner();
-void processWifiScan();
+void scanWifiNetworks() {
+    int n = WiFi.scanNetworks();
+    // ...
+}
