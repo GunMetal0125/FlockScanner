@@ -5,3 +5,4 @@ framework = arduino
 
 lib_deps = 
     lovyan03/LovyanGFX @ ^1.1.16
+    adafruit/Adafruit NeoPixel @ ^1.12.0
