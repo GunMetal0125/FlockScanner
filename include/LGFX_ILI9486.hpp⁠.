@@ -1,49 +1,36 @@
 #pragma once
-#define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 
-class LGFX_ILI9486 : public lgfx::LGFX_Device {
+class LGFX : public lgfx::LGFX_Device
+{
     lgfx::Panel_ILI9486 _panel_instance;
-    lgfx::Bus_Parallel8 _bus_instance;
+    lgfx::Bus_SPI       _bus_instance;
 
 public:
-    LGFX_ILI9486() {
+    LGFX()
+    {
         {
             auto cfg = _bus_instance.config();
-            cfg.freq_write = 20000000;
-            cfg.pin_wr  = 10;
-            cfg.pin_rd  = -1;
-            cfg.pin_rs  = 11; // RS / DC
-            
-            // 8-Bit Parallel Data Bus
-            cfg.pin_d0  = 15;
-            cfg.pin_d1  = 16;
-            cfg.pin_d2  = 17;
-            cfg.pin_d3  = 18;
-            cfg.pin_d4  = 8;
-            cfg.pin_d5  = 3;
-            cfg.pin_d6  = 46;
-            cfg.pin_d7  = 9;
-
+            cfg.spi_host = SPI2_HOST;
+            cfg.spi_mode = 0;
+            cfg.freq_write = 40000000;
+            cfg.pin_sclk = 12; // Update to match your hardware pins
+            cfg.pin_mosi = 11;
+            cfg.pin_miso = 13;
+            cfg.pin_dc   = 10;
             _bus_instance.config(cfg);
             _panel_instance.setBus(&_bus_instance);
         }
 
         {
             auto cfg = _panel_instance.config();
-            cfg.pin_cs           = 12;
-            cfg.pin_rst          = 13;
+            cfg.pin_cs           = 9;  // Update to match your hardware pins
+            cfg.pin_rst          = 14;
             cfg.pin_busy         = -1;
             cfg.panel_width      = 320;
             cfg.panel_height     = 480;
             cfg.offset_x         = 0;
             cfg.offset_y         = 0;
-            cfg.readable         = false;
-            cfg.invert           = false;
-            cfg.rgb_order        = false;
-            cfg.dlen_16bit       = false;
-            cfg.bus_shared       = false;
-
             _panel_instance.config(cfg);
         }
 
