@@ -1,67 +1,46 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <SPI.h>
-#include <SD.h>
-#include "LGFX_ILI9486.hpp"
 #include "display.h"
+#include "led.h"
+#include "wifi.h"
+#include "gps.h"
+#include "storage.h"
 
-// ==========================================
-// Display
-// ==========================================
-LGFX_ILI9486 tft;
+unsigned long alertTimer = 0;
+bool lastAlertState = false;
 
-// ==========================================
-// WiFi Scanner Settings
-// ==========================================
-const char* TARGET_MAC = "F4:12:FA";  // Flock prefix
-unsigned long lastScan = 0;
-bool flockDetected = false;
-
-// ==========================================
-// LED Pin
-// ==========================================
-#define LED_PIN 4
-
-// ==========================================
-// Setup
-// ==========================================
 void setup() {
     Serial.begin(115200);
-    pinMode(LED_PIN, OUTPUT);
-    
-    // Initialize Display
-    tft.init();
-    tft.setRotation(1);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextSize(2);
-    tft.drawString("Scanner Starting...", 10, 10);
 
-    // Set WiFi to Station Mode
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
+    initLED();
+    initDisplay();
+    initStorage();
+    initGPS();
+    initWifiScanner();
+
+    updateDisplayUI(false, lastMAC, lastRSSI, currentChannel);
 }
 
-// ==========================================
-// Main Loop
-// ==========================================
 void loop() {
-    tft.fillScreen(TFT_BLACK);
-    tft.setCursor(10, 10);
-    tft.setTextColor(TFT_WHITE);
-    tft.print("Scanning WiFi...");
+    processWifiScan();
+    processGPS();
 
-    int n = WiFi.scanNetworks(false, true);
-    if (n == 0) {
-        tft.fillScreen(TFT_BLACK);
-        tft.setTextColor(TFT_RED);
-        tft.drawString("No networks found", 10, 50);
-    } else {
-        tft.fillScreen(TFT_BLACK);
-        tft.setTextColor(TFT_GREEN);
-        tft.drawString("Networks found!", 10, 50);
+    if (targetDetected) {
+        targetDetected = false;
+        alertTimer = millis();
+        
+        setLEDColor(0, 0, 255); // Turn LED Blue
+        logDetection(lastMAC, lastRSSI);
+        
+        if (!lastAlertState) {
+            lastAlertState = true;
+            updateDisplayUI(true, lastMAC, lastRSSI, currentChannel);
+        }
     }
-    
-    delay(5000);
+
+    // Return to Idle after 5 seconds of no hits
+    if (lastAlertState && (millis() - alertTimer >= 5000)) {
+        lastAlertState = false;
+        setLEDColor(0, 50, 0); // Green
+        updateDisplayUI(false, lastMAC, lastRSSI, currentChannel);
+    }
 }
