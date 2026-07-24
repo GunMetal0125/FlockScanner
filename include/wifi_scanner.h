@@ -1,11 +1,15 @@
-#include <WiFi.h>  // Add this at the top of src/wifi.cpp
+#pragma once
 
-void initWifiScanner() {
-    WiFi.mode(WIFI_STA);
-    // ...
-}
+#include <Arduino.h>
 
-void scanWifiNetworks() {
-    int n = WiFi.scanNetworks();
-    // ...
-}
+// Function prototypes
+void processWifiScan();
+void scanWifiNetworks();
+void updateDisplayUI(bool target, String mac, int rssi, int channel);
+void logDetection(String mac, int rssi);
+
+// Shared variable declarations
+extern bool targetDetected;
+extern String lastMAC;
+extern int lastRSSI;
+extern int currentChannel;
