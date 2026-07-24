@@ -1,39 +1,34 @@
 #pragma once
+#define LGFX_USE_V1
 #include <LovyanGFX.hpp>
 
-class LGFX : public lgfx::LGFX_Device
-{
+class LGFX : public lgfx::LGFX_Device {
     lgfx::Panel_ILI9486 _panel_instance;
     lgfx::Bus_SPI       _bus_instance;
 
 public:
-    LGFX()
-    {
+    LGFX() {
         {
             auto cfg = _bus_instance.config();
             cfg.spi_host = SPI2_HOST;
             cfg.spi_mode = 0;
             cfg.freq_write = 40000000;
-            cfg.pin_sclk = 12; // Update to match your hardware pins
+            cfg.pin_sclk = 12; // Adjust pins to match your board layout if needed
             cfg.pin_mosi = 11;
             cfg.pin_miso = 13;
             cfg.pin_dc   = 10;
             _bus_instance.config(cfg);
             _panel_instance.setBus(&_bus_instance);
         }
-
         {
             auto cfg = _panel_instance.config();
-            cfg.pin_cs           = 9;  // Update to match your hardware pins
-            cfg.pin_rst          = 14;
-            cfg.pin_busy         = -1;
-            cfg.panel_width      = 320;
-            cfg.panel_height     = 480;
-            cfg.offset_x         = 0;
-            cfg.offset_y         = 0;
+            cfg.pin_cs       = 9;
+            cfg.pin_rst      = 14;
+            cfg.pin_busy     = -1;
+            cfg.panel_width  = 320;
+            cfg.panel_height = 480;
             _panel_instance.config(cfg);
         }
-
         setPanel(&_panel_instance);
     }
 };
