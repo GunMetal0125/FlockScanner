@@ -1,15 +1,9 @@
 #include "storage.h"
-#include <FS.h>
-#include <SD.h>
 
 void initStorage() {
-    SD.begin(5);
+    // Initialize SD or SPIFFS/LittleFS
 }
 
-void logData(GPSData d) {
-    File file = SD.open("/gpslog.txt", FILE_APPEND);
-    if (file) {
-        file.printf("%f,%f\n", d.lat, d.lng);
-        file.close();
-    }
+void logDetection(const char* mac, int rssi) {
+    // Save detection logs to flash memory or SD
 }
