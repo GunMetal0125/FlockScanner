@@ -2,9 +2,8 @@
 
 #include <Arduino.h>
 
-// Function prototypes
+// Function declarations
 void processWifiScan();
-void scanWifiNetworks();
 void updateDisplayUI(bool target, String mac, int rssi, int channel);
 void logDetection(String mac, int rssi);
 
