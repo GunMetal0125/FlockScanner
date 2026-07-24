@@ -1,10 +1,5 @@
 #pragma once
-
-struct GPSData {
-    double lat;
-    double lng;
-    bool valid;
-};
+#include <Arduino.h>
 
 void initGPS();
-GPSData readGPS();
+void processGPS();
