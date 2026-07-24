@@ -1,23 +1,15 @@
 #include "led.h"
-#include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
 
-const int LED_PIN = 2;
+#define LED_PIN 48 // ESP32-S3 onboard RGB LED
+Adafruit_NeoPixel rgbLed(1, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void initLED() {
-    pinMode(LED_PIN, OUTPUT);
+    rgbLed.begin();
+    setLEDColor(0, 50, 0); // Start Green (Idle)
 }
 
-void blinkLED() {
-    digitalWrite(LED_PIN, HIGH);
-    delay(100);
-    digitalWrite(LED_PIN, LOW);
-}
-void triggerAlert() {
-    Serial.println("ALERT: FLOCK CAMERA NEARBY!");
-
-    // Example buzzer
-    tone(GPIO_NUM_15, 2000, 200);
-
-    // Example LED
-    digitalWrite(LED_PIN, HIGH);
+void setLEDColor(uint8_t r, uint8_t g, uint8_t b) {
+    rgbLed.setPixelColor(0, rgbLed.Color(r, g, b));
+    rgbLed.show();
 }
