@@ -3,21 +3,5 @@ platform = espressif32
 board = esp32-s3-devkitc-1
 framework = arduino
 
-; Serial Monitor & Upload Speeds
-monitor_speed = 115200
-upload_speed = 921600
-
-; 16MB Flash & 8MB OPI PSRAM Setup for N16R8
-board_upload.flash_size = 16MB
-board_build.partitions = default_16MB.csv
-board_build.arduino.memory_type = qio_opi
-
-build_flags = 
-    -DARDUINO_USB_MODE=1
-    -DARDUINO_USB_CDC_ON_BOOT=1
-    -DBOARD_HAS_PSRAM
-
 lib_deps = 
-    lovyangfx/LovyanGFX @ ^1.1.16
-    adafruit/Adafruit NeoPixel @ ^1.12.0
-    mikalhart/TinyGPSPlus @ ^1.0.3
+    lovyan03/LovyanGFX @ ^1.1.16
