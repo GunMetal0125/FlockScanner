@@ -1,18 +1,17 @@
-#include <Arduino.h>
 #include <WiFi.h>
+#include "wifi_scanner.h"
 
-void initWifiScanner() {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    delay(100);
-}
+// Actual variable definitions
+bool targetDetected = false;
+String lastMAC = "";
+int lastRSSI = 0;
+int currentChannel = 1;
 
 void scanWifiNetworks() {
     int n = WiFi.scanNetworks();
-    if (n > 0) {
-        for (int i = 0; i < n; ++i) {
-            WiFi.SSID(i);
-            WiFi.RSSI(i);
-        }
-    }
+    // ...
+}
+
+void processWifiScan() {
+    // ...
 }
