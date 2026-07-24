@@ -4,5 +4,5 @@
 void initWifiScanner() {
     WiFi.mode(WIFI_STA);
     WiFi.disconnect();
-    delay(100);
+    // ... rest of your wifi code ...
 }
